@@ -16,14 +16,10 @@ var Letter = function(x) {
             this.isGuessed = true;
         }
         else {
-            // decrement amount of guess by 1
+            // decrement amount of guesses by 1
             remainingGuesses--;
         }
     }
 }
 
 module.exports = Letter;
-
-var  x = new Letter(x);
-
-console.log(x)
