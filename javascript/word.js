@@ -33,7 +33,9 @@ var Word = function(currentWord) {
     // takes in user guess and asks Letter if its true
     this.userGuess = function(x) {
         for (var i = 0; i < letterArray.length; i++) {
-            this.letterArray[i].checkGuess(x); 
+            letterArray[i].checkGuess(x); 
         }
     }
 }
+
+module.exports = Word;
