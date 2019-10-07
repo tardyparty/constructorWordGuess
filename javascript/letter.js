@@ -14,7 +14,6 @@ var Letter = function(x) {
     this.checkGuess = function(x) {
         if (this.string == x) {
             this.isGuessed = true;
-            console.log(x + " is true");
         }
         else {
             // decrement amount of guesses by 1

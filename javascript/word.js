@@ -4,7 +4,6 @@ var Word = function(currentWord) {
 
     // array to store each letter object for word
     var letterArray = [];
-
     this.letterArray = letterArray;
 
     // builds letter object for every letter in word 
@@ -34,6 +33,10 @@ var Word = function(currentWord) {
     this.userGuess = function(x) {
         for (var i = 0; i < letterArray.length; i++) {
             letterArray[i].checkGuess(x); 
+
+            if (letterArray[i].string === " ") {
+                letterArray[i].isGuessed = true;
+            }
         }
     }
 }

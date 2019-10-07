@@ -33,7 +33,8 @@ var currentWord = "";
 var gameWord;
 var guesses = [];
 var remainingGuesses = 8;
-var finished = false;
+var lastGuessArray = [];
+var isFinished = false;
 
 
 // requirements
@@ -51,8 +52,10 @@ var createWord = function() {
 
 
 var resetGame = function() {
-    remainingGuesses = 5;
+    remainingGuesses = 8;
     guesses = [];
+    lastGuessArray = [];
+    isFinished = false;
 }
 
 
@@ -61,48 +64,108 @@ var gamePlay = function() {
 
     // create new word for this game
     createWord();
-    console.log(gameWord.showWord());
+    console.log("The Category is Countries. Good Luck!");
+    console.log("\n" + gameWord.showWord() + "\n");
     makeGuess();
 
-    function makeGuess() { 
-        if (!finished || remainingGuesses > 0) {
-            inquirer.prompt([
-                { 
-                name: "input",
-                message: "Please guess a letter: ",
-                }
-            ]).then(function(answer) {
 
-                // check if guess was correct and display new word
-                if (guesses.indexOf(answer.input) === -1) {
+    // takes in a letter from user and checks if it is in the array and displays.
+    function makeGuess() {
+        if (!isFinished) {
+            if (remainingGuesses > 0) {
+                inquirer.prompt([
+                    { 
+                    name: "input",
+                    message: "Please guess a letter -> ",
+                    }
+                ]).then(function(answer) {
 
-                    console.log(currentWord);
-                    gameWord.userGuess(answer.input);
-                    guesses.push(answer.input);
-                    console.log("Guessed Letters: " + guesses.join(", "));
-                    remainingGuesses--;
+                    if (guesses.indexOf(answer.input) === -1) {
+
+                        // checks if guess is correct
+                        gameWord.userGuess(answer.input);
+
+                        // adds guess to list of guesses
+                        guesses.push(answer.input);
+
+                        // updates gameplay in console
+                        console.log("\n" + "Guessed Letters: " + guesses.join(", "));
+                        console.log("\n" + gameWord.showWord() + "\n");
+                        
+                        checkGuess();
+                    }
+
+                    // already guessed letter, guess again
+                    else {
+                        console.log("\n" + "Please guess a new letter");
+                    }
+
                     makeGuess();
-                }
+                });
+            }
+            else {
 
-                // if guess was wrong, decrement remainingGuesses
-                if () {
-                    remainingGuesses--;
-                }
-
-                // already guessed letter, guess again
-                else {
-                    console.log("Please guess a new letter");
-                    makeGuess();
-                }
-            })
-        }
-        else if (remainingGuesses === 0) {
-            console.log("Sorry, you lost. The correct word was " + currentWord);
+                // user is out of guesses, game over
+                console.log("\n" + "********* GAME OVER **********" + "\n");
+                isFinished = true;
+                playAgain();
+            }
         }
         else {
-            console.log(
+            console.log("\n" + "********** YOU WIN! **********" + "\n")
+            playAgain();
         }
+    }
+
+
+    function checkGuess() {
+        
+        // array to save the most recent instance of the game
+        var thisTurnArray = [];
+
+        // create the most recent instance array 
+        for (var i=0; i < gameWord.letterArray.length; i++) {
+            thisTurnArray.push(gameWord.letterArray[i].isGuessed);
+        }
+
+        // if the arrays are the same, the guess was wrong
+        if (JSON.stringify(lastGuessArray) === JSON.stringify(thisTurnArray)) {
+            remainingGuesses--;
+        }
+
+        if (thisTurnArray.indexOf(false) === -1) {
+            isFinished = true;
+        }
+
+        // update last turn array before next turn
+        lastGuessArray = thisTurnArray;
     }
 }
 
+
+function playAgain() {
+
+    inquirer.prompt([
+        {
+            type: "confirm",
+            name: "playAgain",
+            message: "Would you like to play again?",
+        }
+    ]).then(function(response) {
+
+        if (response.playAgain) {
+            console.log("\n" + "Alright! Let's Play!" + "\n");
+            resetGame();
+            gamePlay();
+        }
+        else {
+            console.log("\n" + "Thanks for playing! Seeya!" + "\n")
+        }
+    })
+}
+
+
+// starts first game
 gamePlay();
+
+
